@@ -9,8 +9,8 @@ import time
 
 # Set up ChromeDriver with options
 chrome_options = Options()
-chrome_options.add_argument("--headless")  # Run headless Chrome
-chrome_service = Service('chromedriver.exe')  # Make sure to provide the correct path
+chrome_options.add_argument("--headless")  
+chrome_service = Service('chromedriver.exe')  
 driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
 
 # Ticker symbols
@@ -20,7 +20,7 @@ tickers = ['AEE', 'REZ', '1AE', '1MC', 'NRZ']
 def fetch_announcements(ticker):
     url = f"https://www.asx.com.au/asx/1/company/{ticker}/announcements?count=20&market_sensitive=false"
     driver.get(url)
-    time.sleep(3)  # Wait for the page to load, you might need to adjust this
+    time.sleep(3)  
     
     try:
         page_source = driver.page_source
@@ -67,4 +67,4 @@ for ticker, announcements in all_announcements.items():
     if announcements and has_trading_halt(announcements):
         st.write(ticker)
 
-driver.quit()  # Don't forget to close the browser when you're done
+driver.quit()  
