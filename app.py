@@ -5,21 +5,26 @@ import json
 # Ticker symbols
 tickers = ['AEE', 'REZ', '1AE', '1MC', 'NRZ']
 
-# Function to fetch announcements using requests
+# Function to fetch announcements using requests with headers
 def fetch_announcements(ticker):
     url = f"https://www.asx.com.au/asx/1/company/{ticker}/announcements?count=20&market_sensitive=false"
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
+    
     try:
-        response = requests.get(url)
+        response = requests.get(url, headers=headers)
         response.raise_for_status()  # Raise an error if the request failed
         
-        # Check if the response is empty or not JSON
-        if not response.content or response.headers.get('Content-Type') != 'application/json':
-            st.error(f"Unexpected response for {ticker}: {response.text[:200]}")  # Display first 200 characters
+        # Check if the response is valid JSON
+        if response.headers.get('Content-Type') == 'application/json':
+            json_data = response.json()
+            announcements = json_data.get('data', [])
+            return announcements
+        else:
+            st.error(f"Unexpected response for {ticker}: {response.text[:200]}")  # Display first 200 characters of the response
             return None
-        
-        json_data = response.json()  # Attempt to parse JSON
-        announcements = json_data.get('data', [])
-        return announcements
     
     except requests.exceptions.RequestException as e:
         st.error(f"Failed to fetch announcements for {ticker}: {str(e)}")
